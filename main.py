@@ -3,7 +3,7 @@ from flask import Flask, request, redirect, jsonify, abort
 import filestore
 
 app = Flask(__name__)
-DOMAIN_NAME = ""
+DOMAIN_NAME = "" # Specify your domain/IP address here (optional)
 
 @app.route('/', methods=['GET'])
 def hello():
