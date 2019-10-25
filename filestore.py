@@ -26,6 +26,8 @@ if not os.path.isdir('files'):
 
 
 def allowed_file(filename):
+    """Check if uploaded file is of the allowed format/ extension
+    """
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
