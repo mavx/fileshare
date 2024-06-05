@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "fileshare"
+version = "0.1.0"
+description = ""
+authors = ["mavx <auyongminhao@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.12"
+flask = "^3.0.3"
+gunicorn = "^22.0.0"
+tinydb = "^4.8.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.10.0"
+ruff = "^0.4.8"
+
+[tool.ruff.lint]
+extend-select = [
+    "I",  # isort
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

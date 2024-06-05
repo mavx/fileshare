@@ -2,16 +2,15 @@
 Simple endpoint to accept file uploads and returns a URL for sharing.
 
 ## Requirements
-* Python3.5+
-* pipenv
+* Python3.12+
+* [just](https://github.com/casey/just)
 
 ## Running the app
 ```
 git clone https://github.com/mavx/fileshare
 cd fileshare
-pipenv install --python python3 # Select python version
-pipenv run python main.py
-# pipenv run gunicorn -b :PORT_NUMBER main:app # Alternatively if hosting on server
+
+just run-dev
 ```
 
 ## Usage
