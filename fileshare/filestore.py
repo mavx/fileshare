@@ -5,31 +5,28 @@ To Do:
 """
 
 import datetime as dt
+import os
 import random
 import string
-import os
 
-from flask import url_for, send_from_directory, safe_join
-from werkzeug.utils import secure_filename
-from tinydb import TinyDB, Query
+from flask import send_from_directory
+from tinydb import Query, TinyDB
+from werkzeug.utils import safe_join, secure_filename
 
-UPLOAD_FOLDER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), 'files'
-)
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "files")
+ALLOWED_EXTENSIONS = set(["txt", "pdf", "png", "jpg", "jpeg", "gif"])
 
-db = TinyDB('file_index.json')
+db = TinyDB("file_index.json")
 
 # INITIAL SETUP
-if not os.path.isdir('files'):
-    os.makedirs('files')
+if not os.path.isdir("files"):
+    os.makedirs("files")
 
 
 def allowed_file(filename):
-    """Check if uploaded file is of the allowed format/ extension
-    """
-    return '.' in filename and \
-            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    """Check if uploaded file is of the allowed format/ extension"""
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def process_upload(file_obj):
     """Process the uploaded file by checking filename and
@@ -37,7 +34,7 @@ def process_upload(file_obj):
 
     Args:
         file_obj (flask file object): flask.request.files['file'] object
-    
+
     Returns:
         str: Unique upload ID
     """
@@ -45,16 +42,12 @@ def process_upload(file_obj):
     upload_id = generate_id()
     processed_filename = unique_filename(filename, upload_id)
     file_obj.save(os.path.join(UPLOAD_FOLDER, processed_filename))
-    filepath = safe_join('/files', processed_filename)
+    filepath = safe_join("/files", processed_filename)
 
-    db_add_file(
-        upload_id,
-        filename, 
-        processed_filename, 
-        filepath
-    ) # Save path to DB
+    db_add_file(upload_id, filename, processed_filename, filepath)  # Save path to DB
 
     return upload_id
+
 
 def unique_filename(filename, upload_id):
     """Replace filename with upload_id, preserving file extension if any.
@@ -62,7 +55,7 @@ def unique_filename(filename, upload_id):
     Args:
         filename (str): Original filename
         upload_id (str): Unique upload ID
-    
+
     Returns:
         str: An upload_id based filename
     """
@@ -70,6 +63,7 @@ def unique_filename(filename, upload_id):
         return ".".join([upload_id, filename.rsplit(".", 1)[1]])
     else:
         return upload_id
+
 
 def db_add_file(upload_id, filename, processed_filename, filepath):
     """Insert an entry into file_index.json with upload details.
@@ -79,17 +73,20 @@ def db_add_file(upload_id, filename, processed_filename, filepath):
         filename (str): The original filename.
         processed_filename (str): New filename with upload ID as the rootname.
         filepath (str): The filepath relative to the domain.
-    
+
     Returns:
         str: Unique upload ID
     """
-    db.insert({
-        'ori_name': filename,
-        'path': filepath,
-        'created_on': str(dt.datetime.utcnow()),
-        'key': upload_id
-    })
+    db.insert(
+        {
+            "ori_name": filename,
+            "path": filepath,
+            "created_on": str(dt.datetime.utcnow()),
+            "key": upload_id,
+        }
+    )
     return upload_id
+
 
 def generate_id(size=6):
     """Generate a random ID, hopefully unique to be used as a unique identifier
@@ -97,13 +94,14 @@ def generate_id(size=6):
 
     Args:
         size (int): Number of characters to generate
-    
+
     Returns:
         str: The random ID
     """
-    return ''.join(
+    return "".join(
         random.SystemRandom().choice(string.ascii_letters) for _ in range(size)
     )
+
 
 def show_file(value, is_key=True):
     """Get filepath corresponding to the `value`.
@@ -121,9 +119,10 @@ def show_file(value, is_key=True):
     """
     if is_key:
         entry = get_entry(value)
-        return entry.get('path')
+        return entry.get("path")
     else:
         return send_from_directory(UPLOAD_FOLDER, value)
+
 
 def get_entry(key):
     """Find the TinyDB entry with the same `key` value as the `key` args here.
